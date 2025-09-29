@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import Categories from './pages/CategoryPage';
 import SubCategories from './pages/SubCategories';
 import MiniSubCategories from './pages/MiniSubCategories';
+import ProductsPage from './pages/ProductsPage';
 
 // Sahifalar (hozircha bo‘sh komponentlar)
 // function Categories() {
@@ -13,9 +14,9 @@ import MiniSubCategories from './pages/MiniSubCategories';
 // function SubCategories() {
 //   return <h2>SubCategories Page</h2>;
 // }
-function Products() {
-  return <h2>Products Page</h2>;
-}
+// function Products() {
+//   return <h2>Products Page</h2>;
+// }
 
 // Layout
 function Layout() {
@@ -37,7 +38,7 @@ function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="subcategories" element={<SubCategories />} />
           <Route path='minisubcategories' element={<MiniSubCategories/>}/>
-          <Route path="products" element={<Products />} />
+          <Route path="products" element={<ProductsPage/>} />
         </Route>
       </Routes>
     </Router>

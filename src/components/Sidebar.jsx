@@ -6,6 +6,9 @@ function Sidebar() {
       <nav>
         <ul>
           <li>
+            <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home Page</NavLink>
+          </li>
+          <li>
             <NavLink to="/categories" className={({ isActive }) => isActive ? "active" : ""}>
               Categories
             </NavLink>

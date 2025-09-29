@@ -21,6 +21,30 @@
   gap: 12px;
   align-items: center;
   margin-bottom: 18px;
+  max-width: 500px;
+}
+
+.mini-page .filters select:focus {
+  border-color: #333;
+  /* fokusda to‘qroq qora */
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  /* jiddiy effekt */
+}
+
+
+.mini-page .filters select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #000;
+  /* qora chegara */
+  border-radius: 4px;
+  /* biroz yumaloq burchak */
+  background-color: #fff;
+  /* oq fon */
+  color: #000;
+  /* qora matn */
+  outline: none;
 }
 
 /* standardized input/select look used across the page */
@@ -37,7 +61,7 @@
 
 .mini-page .form-control:focus {
   border-color: #333;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
   background: #fff;
 }
 
@@ -78,43 +102,66 @@
   font-size: 13px;
   transition: background .12s, color .12s, border-color .12s;
 }
-
-.mini-page .btn:hover { background: #f2f2f2; }
+.mini-page .btn:active {
+  scale: 0.97;
+}
+.mini-page .btn:hover {
+  background: #f2f2f2;
+}
 
 .mini-page .btn.primary {
   background: #111;
   color: #fff;
   border-color: #111;
 }
-.mini-page .btn.primary:hover { background: #2b2b2b; }
+
+.mini-page .btn.primary:hover {
+  background: #2b2b2b;
+}
 
 .mini-page .btn.danger {
   border-color: #f1c0c0;
   color: #b00000;
   background: #fff;
 }
-.mini-page .btn.danger:hover { background: #fff3f3; }
+
+.mini-page .btn.danger:hover {
+  background: #fff3f3;
+}
 
 /* small action group */
-.mini-page .actions { display:flex; gap:8px; align-items:center; }
+.mini-page .actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
 
 /* --- Fixed Add Form (bottom-left) --- */
 .mini-page .fixed-add {
   position: fixed;
-  left: 20px;
-  bottom: 20px;
+  top: 71px;
+  right: 20px;
   z-index: 1200;
   background: #f6f6f6;
   border: 1px solid #e6e6e6;
   padding: 14px;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(16,16,16,0.06);
+  box-shadow: 0 6px 20px rgba(16, 16, 16, 0.06);
   display: flex;
   gap: 10px;
   align-items: center;
   min-width: 420px;
 }
-
+.mini-page .fixed-add input, .mini-page .fixed-add select {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 15px;
+  border: 1px solid #000; /* qora chegara */
+  border-radius: 4px;    /* biroz yumaloq burchak */
+  background-color: #fff; /* oq fon */
+  color: #000;            /* qora matn */
+  outline: none;
+}
 /* make it responsive on small screens */
 @media (max-width: 720px) {
   .mini-page .fixed-add {
@@ -125,60 +172,86 @@
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .mini-page .form-control { min-width: 120px; width: 48%; }
-  .mini-page .btn { width: auto; }
+
+  .mini-page .form-control {
+    min-width: 120px;
+    width: 48%;
+  }
+
+  .mini-page .btn {
+    width: auto;
+  }
 }
 
 /* --- Modal --- */
 .mini-page .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1400;
 }
 
-.mini-page .modal {
+.mini-page .modal-window {
   background: #fff;
   border-radius: 12px;
   padding: 18px;
-  width: 420px;
+  width: 520px;
   max-width: calc(100% - 40px);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.15);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.15);
 }
 
-.mini-page .modal h3 {
+.mini-page .modal-window h3 {
   margin: 0 0 12px 0;
   font-size: 17px;
 }
 
-.mini-page .modal .modal-row {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:8px;
+.mini-page .modal-window .modal-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.mini-page .modal-window .modal-row select, .mini-page .modal-window .modal-row input {
+  width: 90%;
+  padding: 6px 12px;
+  font-size: 15px;
+  border: 1px solid #000; /* qora chegara */
+  border-radius: 4px;    /* biroz yumaloq burchak */
+  background-color: #fff; /* oq fon */
+  color: #000;            /* qora matn */
+  outline: none
 }
 
 /* modal buttons */
-.mini-page .modal .controls {
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:10px;
+.mini-page .modal-window .controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 /* subtle small text for errors */
 .mini-page .error {
   color: #b00000;
   font-size: 13px;
-  margin-top:6px;
+  margin-top: 6px;
 }
 
 /* utility spacing */
-.mini-page .mb-8 { margin-bottom: 18px; }
-.mini-page .gap-2 { gap: 8px; display: flex; align-items: center; }
+.mini-page .mb-8 {
+  margin-bottom: 18px;
+}
+
+.mini-page .gap-2 {
+  gap: 8px;
+  display: flex;
+  align-items: center;
+}
 
 /* small visual tweak for selects options clarity */
-.mini-page select.form-control option[disabled] { color: #777; }
+.mini-page select.form-control option[disabled] {
+  color: #777;
+}

@@ -15,6 +15,7 @@ function SubCategories() {
 
   // 🔹 Update modal state
   const [editingSubCat, setEditingSubCat] = useState(null);
+  const [selectedCategoryId, SetSelectedCategoryId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false);
 
   // Fetch subcategories
@@ -65,6 +66,11 @@ function SubCategories() {
     }
   };
 
+  // open Upd Modal
+  function openModal(data) {
+    SetSelectedCategoryId(data.category_id)
+    setModalOpen(true)
+  }
   // Update subcategory
   const updateSubCategory = async (e) => {
     e.preventDefault();
@@ -82,9 +88,9 @@ function SubCategories() {
     }
 
     try {
-      await api.put(`/subcategories/${editingSubCat._id}`, {
+      await api.put(`/subcategories/${editingSubCat.id}`, {
         name: editingSubCat.name,
-        category_id: editingSubCat.category_id,
+        category_id: selectedCategoryId,
       });
       setModalOpen(false);
       setEditingSubCat(null);
@@ -179,9 +185,9 @@ function SubCategories() {
                 <tr key={sc.id}>
                   <td>{index + 1}</td>
                   <td>{sc.name}</td>
-                  <td>{sc.category?.name}</td>
+                  <td>{categories.find((cat)=> cat.id === sc.category_id)?.name}</td>
                   <td>
-                    <button onClick={() => { setEditingSubCat(sc); setModalOpen(true); }}>Edit</button>
+                    <button className="btn primary" onClick={() => { setEditingSubCat(sc); openModal(sc); }}>Edit</button>
                     <button onClick={() => deleteSubCategory(sc.id)} style={{ marginLeft: "10px", color: "red" }}>
                       Delete
                     </button>
@@ -210,8 +216,8 @@ function SubCategories() {
                 className="cat-input"
               />
               <select
-                value={editingSubCat?.category_id || ""}
-                onChange={(e) => setEditingSubCat({ ...editingSubCat, category_id: e.target.value })}
+                value={selectedCategoryId || ""}
+                onChange={(e) => SetSelectedCategoryId(e.target.value)}
                 className="cat-input"
               >
                 <option value="">Select Category</option>
