@@ -20,7 +20,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 18px;
+  margin:40px 0 18px;
   max-width: 500px;
 }
 
@@ -139,7 +139,7 @@
 /* --- Fixed Add Form (bottom-left) --- */
 .mini-page .fixed-add {
   position: fixed;
-  top: 71px;
+  top: 31px;
   right: 20px;
   z-index: 1200;
   background: #f6f6f6;
@@ -151,6 +151,10 @@
   gap: 10px;
   align-items: center;
   min-width: 420px;
+  max-width: 800px;
+}
+.mini-page .fixed-add .unit-select {
+  max-width: 80px;
 }
 .mini-page .fixed-add input, .mini-page .fixed-add select {
   width: 100%;

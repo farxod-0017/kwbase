@@ -13,6 +13,7 @@ function MiniSubCategories() {
     const [newName, setNewName] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [subCategoryId, setSubCategoryId] = useState("");
+    const [miniUnit, setMiniUnit] = useState("")
 
     const [filterCategory, setFilterCategory] = useState("");
     const [filterSubCategory, setFilterSubCategory] = useState("");
@@ -21,6 +22,7 @@ function MiniSubCategories() {
     const [editName, setEditName] = useState("");
     const [editCategoryId, setEditCategoryId] = useState("");
     const [editSubCategoryId, setEditSubCategoryId] = useState("");
+    const [miniUnitEdit, setMiniUnitEdit] = useState("")
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -71,7 +73,7 @@ function MiniSubCategories() {
     };
 
     const handleAdd = async () => {
-        if (!newName.trim() || !categoryId || !subCategoryId) {
+        if (!newName.trim() || !categoryId || !subCategoryId || !miniUnit) {
             return (
                 // [!newName.trim() || !categoryId || !subCategoryId].filter((note)=> note == true).map((item)=>{
                 //     return (
@@ -93,6 +95,7 @@ function MiniSubCategories() {
 
         await api.post("/subcategories", {
             name: newName,
+            unit: miniUnit,
             category_id: categoryId,
             parent_id: subCategoryId,
         });
@@ -100,6 +103,7 @@ function MiniSubCategories() {
         setNewName("");
         setCategoryId("");
         setSubCategoryId("");
+        setMiniUnit("")
         fetchMiniSubs();
     };
 
@@ -114,10 +118,11 @@ function MiniSubCategories() {
         setEditName(mini.name);
         setEditCategoryId(mini.category_id);
         setEditSubCategoryId(mini.parent_id);
+        setMiniUnitEdit(mini.unit || "");
     };
 
     const handleUpdate = async () => {
-        if (!editName.trim() || !editCategoryId || !editSubCategoryId) return (
+        if (!editName.trim() || !editCategoryId || !editSubCategoryId || !miniUnitEdit) return (
             alert("Ma'lumotlarni to'ldiring")
         );
 
@@ -133,6 +138,7 @@ function MiniSubCategories() {
 
         await api.put(`/subcategories/${editingMiniSub.id}`, {
             name: editName,
+            unit:miniUnitEdit,
             category_id: editCategoryId,
             parent_id: editSubCategoryId,
         });
@@ -167,7 +173,7 @@ function MiniSubCategories() {
                     className="form-control"
                 >
                     <option value="">Filter by SubCategory(All)</option>
-                    {subCategories?.filter((s) => !filterCategory || s.category_id === filterCategory).map((item) =>{
+                    {subCategories?.filter((s) => !filterCategory || s.category_id === filterCategory).map((item) => {
                         return (
                             <option key={item.id} value={item.id}>{item.name}</option>
                         )
@@ -184,6 +190,20 @@ function MiniSubCategories() {
                     onChange={(e) => setNewName(e.target.value)}
                     className="border px-2 py-1 mr-2"
                 />
+                <select
+                    className="unit-select"
+                    value={miniUnit}
+                    onChange={(e) => setMiniUnit(e.target.value)}
+                >
+                    <option value="">unit:</option>
+                    <option value="kg">kg</option>
+                    <option value="to‘nna">to‘nna</option>
+                    <option value="dona">dona</option>
+                    <option value="m.kub">m.kub</option>
+                    <option value="metr">metr</option>
+                    <option value="litr">litr</option>
+                    <option value="m.kv">m.kv</option>
+                </select>
                 <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
@@ -229,6 +249,7 @@ function MiniSubCategories() {
                         <tr>
                             <th>N</th>
                             <th>Name</th>
+                            <th>Unit</th>
                             <th>Category</th>
                             <th>SubCategory</th>
                             <th>Actions</th>
@@ -242,6 +263,7 @@ function MiniSubCategories() {
                                     <tr key={m.id}>
                                         <td>{index + 1}</td>
                                         <td>{m.name}</td>
+                                        <td>{m.unit || "-"}</td>
                                         <td>
                                             {/* categories */}
                                             {categories?.find((c) => c.id === m.category_id)?.name}
@@ -294,6 +316,20 @@ function MiniSubCategories() {
                                 ))}
                             </select>
                             <select
+                                className="unit-select"
+                                value={miniUnitEdit}
+                                onChange={(e) => setMiniUnitEdit(e.target.value)}
+                            >
+                                <option value="">unit:</option>
+                                <option value="kg">kg</option>
+                                <option value="to‘nna">to‘nna</option>
+                                <option value="dona">dona</option>
+                                <option value="m.kub">m.kub</option>
+                                <option value="metr">metr</option>
+                                <option value="litr">litr</option>
+                                <option value="m.kv">m.kv</option>
+                            </select>
+                            <select
                                 value={editSubCategoryId}
                                 onChange={(e) => setEditSubCategoryId(e.target.value)}
                             >
@@ -310,7 +346,7 @@ function MiniSubCategories() {
 
                         <div className="controls">
                             <button
-                            className="btn danger"
+                                className="btn danger"
                                 onClick={() => setEditingMiniSub(null)}
                             >
                                 Cancel

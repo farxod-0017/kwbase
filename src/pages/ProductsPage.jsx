@@ -10,13 +10,23 @@ export default function ProductsPage() {
     const [categories, setCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
     const [miniSubs, setMiniSubs] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [productBase, setProductBase] = useState(1);
 
     const [selectedCatId, setSelectedCatId] = useState("");
     const [selectedSubId, setSelectedSubId] = useState("");
     const [selectedMinId, setSelectedMinId] = useState("");
+    const [editingProductId, setEditingProductId] = useState("")
+
+    const [filterCatId, setFilterCatId] = useState("");
+    const [filterSubId, setFilterSubId] = useState("");
+    const [filterMiniId, setFilterMiniId] = useState("")
 
     const [name, setName] = useState("");
-    const [union, setUnion] = useState("");
+    const [unit, setUnit] = useState("");
+
+    let [pagin, setPagin] = useState(1)
 
     useEffect(() => {
         fetchMiniSubs();
@@ -29,7 +39,6 @@ export default function ProductsPage() {
             setLoading(true)
             const res = await api.get("/subcategories/child");
             setMiniSubs(res.data);
-            setFilteredMiniSubs(res.data);
         }
         catch (error) {
             console.log("fetch mini sub cat:", error);
@@ -54,59 +63,274 @@ export default function ProductsPage() {
         setSubCategories(res.data);
     };
 
-    function openEditModal() {
-        setAddEditModal(2)
+    const fetchProducts = async () => {
+        try {
+            setLoading(true)
+            const res = await api.get(`/products/paginated?page=${pagin}&limit=20`)
+            setProducts(res.data);
+            setFilteredProducts(res.data.data);
+            setProductBase(1);
+        }
+        catch (error) {
+            console.log("fetch products:", error);
+        }
+        finally {
+            setLoading(false)
+        }
     }
+    useEffect(() => {
+        fetchProducts()
+    }, [pagin])
+
+    function controlMini(id) {
+        setSelectedMinId(id);
+        const unit = miniSubs?.find((item) => item.id === id)?.unit
+        setUnit(unit)
+    };
+    function clearFilters() {
+        setFilterCatId("");
+        setFilterSubId("");
+        setFilterMiniId("");
+        setProductBase(1);
+        updateBase()
+    };
+    function updateBase() {
+        if (productBase === 1) {
+            fetchProducts();
+        } else if (productBase === 2) {
+            fetchMiniProducts()
+        }
+    };
+    function clickPrev() {
+        if(products.page === 1) {
+            setPagin(products.totalPages)
+        }else {
+            setPagin(--pagin)
+        }
+    };
+    function clickNext() {
+        if(products.page === products.totalPages) {
+            setPagin(1)
+        }else {
+            setPagin(++pagin)
+        }
+    }
+
+
+    function openAddModal() {
+        setAddEditModal(1);
+        setName("");
+        setUnit("");
+        setSelectedCatId("");
+        setSelectedSubId("");
+        setSelectedMinId("");
+    }
+    const handleAdd = async () => {
+        if (!name.trim() || !selectedMinId || !unit) {
+            return (
+                // [!newName.trim() || !categoryId || !subCategoryId].filter((note)=> note == true).map((item)=>{
+                //     return (
+                //         alert("To'ldirilmagan:", item)
+                //     )
+                // });
+                alert("Malumotlar to'ldirilmagan")
+            )
+        };
+
+        // Duplicate check (hatto boshqa category/subcategory bo‘lsa ham)
+        const exists = filteredProducts.some(
+            (m) => m.name.toLowerCase() === name.toLowerCase()
+        );
+        if (exists) {
+            alert("Bunday nomli Product allaqachon mavjud!");
+            return;
+        }
+
+        await api.post("/products", {
+            name: name,
+            unit: unit,
+            subcategory_id: selectedMinId,
+        });
+        updateBase()
+        setAddEditModal(false)
+    };
+
+
+    function openEditModal(pr) {
+        setEditingProductId(pr.id)
+        setSelectedCatId(pr.subcategory.parent.category.id);
+        setSelectedSubId(pr.subcategory.parent.id);
+        setSelectedMinId(pr.subcategory.id);
+        setName(pr.name)
+        setUnit(pr.unit || "")
+        setAddEditModal(2);
+    };
+    const handleUpdate = async () => {
+        if (!name.trim() || !selectedMinId || !unit) {
+            return (
+                // [!newName.trim() || !categoryId || !subCategoryId].filter((note)=> note == true).map((item)=>{
+                //     return (
+                //         alert("To'ldirilmagan:", item)
+                //     )
+                // });
+                alert("Malumotlar to'ldirilmagan")
+            )
+        };
+
+        // Duplicate check (hatto boshqa category/subcategory bo‘lsa ham)
+        const exists = filteredProducts.some(
+            (m) => m.name.toLowerCase() === name.toLowerCase() &&
+                m.id !== editingProductId
+        );
+        if (exists) {
+            alert("Bunday nomli Product allaqachon mavjud!");
+            return;
+        }
+
+        await api.put(`/products/${editingProductId}`, {
+            name: name,
+            unit: unit,
+            subcategory_id: selectedMinId,
+        });
+        updateBase()
+        setAddEditModal(false)
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("O‘chirishni xohlaysizmi?")) return;
+        await api.delete(`/products/${id}`);
+        updateBase();
+    };
+
+    // Filters Gets
+    const fetchMiniProducts = async () => {
+        if (filterMiniId === "") return
+        try {
+            setLoading(true)
+            const res = await api.get(`/products/subcategoryId/${filterMiniId}`);
+            if (res.data) {
+                setFilteredProducts(res.data);
+                setProductBase(2);
+                console.log("ok");
+            }
+        }
+        catch (error) {
+            console.log("fetch mini products:", error);
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    useEffect(() => {
+        fetchMiniProducts()
+    }, [filterMiniId]);
+
+
     return (
         <section className="product-page mini-page">
             <div className="fixed-head">
                 <h2>Products Page</h2>
                 <div className="product-head">
                     <div className="product-filter">
-                        <select>
-                            <option value="">Filter by Category (All)</option>
+                        <select
+                            value={filterCatId}
+                            onChange={(e) => setFilterCatId(e.target.value)}
+                        >
+                            <option value="">Category tanlang</option>
+                            {categories.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.name}
+                                </option>
+                            ))}
                         </select>
-                        <select>
-                            <option value="">Filter by SubCategory (All)</option>
+                        <select
+                            value={filterSubId}
+                            onChange={(e) => setFilterSubId(e.target.value)}
+                        >
+                            <option value="">SubCategory tanlang</option>
+                            {subCategories
+                                .filter((s) => !filterCatId || s.category_id === filterCatId)
+                                .map((s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name}
+                                    </option>
+                                ))}
                         </select>
-                        <select>
-                            <option value="">Filter by MiniSubCategory (All)</option>
+                        <select
+                            value={filterMiniId}
+                            onChange={(e) => setFilterMiniId(e.target.value)}
+                        >
+                            <option value="">MiniSubCategory tanlang</option>
+                            {miniSubs
+                                .filter((ms) => !filterSubId || ms.parent_id === filterSubId)
+                                .map((m) => {
+                                    return (
+                                        <option key={m.id} value={m.id}>{m.name}</option>
+                                    )
+                                })
+                            }
                         </select>
+                        <button onClick={() => clearFilters()} className='clear-filters'>Clear Filters</button>
                     </div>
-                    <button onClick={() => setAddEditModal(1)} type="button">Add Product</button>
+                    <button onClick={() => openAddModal()} type="button">Add Product</button>
                 </div>
             </div>
 
-            <table className='table'>
-                <thead>
-                    <tr>
-                        <th>N</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>SubCategory</th>
-                        <th>MiniSubcategory</th>
-                        <th>Unit</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nomi</td>
-                        <td>swd</td>
-                        <td>dw</td>
-                        <td>csfd</td>
-                        <td>kg</td>
-                        <td>
-                            <div className="actions">
-                                <button onClick={() => openEditModal()} className="btn primary" type="button">Edit</button>
-                                <button className="btn danger" type="button">Delete</button>
-                            </div>
-                        </td>
+            <div className="table_wrap">
+                {loading ?
+                    <p>Loading ...</p> :
+                    <table className='table'>
+                        <thead>
+                            <tr>
+                                <th>N</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>SubCategory</th>
+                                <th>MiniSubcategory</th>
+                                <th>Unit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredProducts.length > 0 ?
+                                filteredProducts.map((pr, index) => {
+                                    return (
+                                        <tr key={pr.id}>
+                                            <td>{index + 1}</td>
+                                            <td>{pr.name}</td>
+                                            <td>{pr.subcategory.parent.category.name}</td>
+                                            <td>{pr.subcategory.parent.name}</td>
+                                            <td>{pr.subcategory.name}</td>
+                                            <td>{pr.unit || "-"}</td>
+                                            <td>
+                                                <div className="actions">
+                                                    <button onClick={() => openEditModal(pr)} className="btn primary" type="button">Edit</button>
+                                                    <button onClick={() => handleDelete(pr.id)} className="btn danger" type="button">Delete</button>
+                                                </div>
+                                            </td>
 
-                    </tr>
-                </tbody>
-            </table>
+                                        </tr>
+                                    )
+                                })
+                                :
+                                <tr><td><p>Not Found</p></td></tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            {productBase === 1 ?
+                <div className="pagination">
+                    <button onClick={() => clickPrev()} type="button">prev</button>
+                    <div className="pagin_center">
+                        <h4>
+                            {products.page + "/" + products.totalPages}
+                        </h4>
+                    </div>
+                    <button onClick={() => clickNext()} type='button'>next</button>
+                </div> :
+                <span></span>
+            }
             {
                 addEditModal && (
                     <div className='modal-backdrop'>
@@ -139,26 +363,29 @@ export default function ProductsPage() {
                                 </select>
                                 <select
                                     value={selectedMinId}
-                                    onChange={(e) => setSelectedMinId(e.target.value)}
+                                    onChange={(e) => controlMini(e.target.value)}
                                 >
+                                    <option value="">MiniSubCategory tanlang</option>
                                     {miniSubs
                                         .filter((ms) => !selectedSubId || ms.parent_id === selectedSubId)
                                         .map((m) => {
                                             return (
-                                                <option value={m.id}>{m.name}</option>
+                                                <option key={m.id} value={m.id}>{m.name}</option>
                                             )
                                         })
                                     }
                                 </select>
                                 <input
+                                    placeholder='Product name'
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                 />
                                 <select
-                                    value={union}
-                                    onChange={(e) => setUnion(e.target.value)}
+                                    value={unit}
+                                    onChange={(e) => setUnit(e.target.value)}
                                 >
+                                    <option value="">unit:</option>
                                     <option value="kg">kg</option>
                                     <option value="to‘nna">to‘nna</option>
                                     <option value="dona">dona</option>
@@ -176,11 +403,24 @@ export default function ProductsPage() {
                                 >
                                     Cancel
                                 </button>
-                                <button
-                                    className="btn primary"
-                                >
-                                    Save
-                                </button>
+                                {addEditModal === 1 ?
+                                    <button
+                                        className="btn primary"
+                                        onClick={() => handleAdd()}
+                                    >
+                                        Save
+                                    </button>
+                                    :
+                                    <button
+                                        type="button"
+                                        className='btn primary'
+                                        onClick={() => handleUpdate()}
+                                    >
+                                        Save(edit)
+                                    </button>
+
+                                }
+
                             </div>
                         </div>
                     </div>
