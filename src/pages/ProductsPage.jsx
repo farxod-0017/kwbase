@@ -87,31 +87,35 @@ export default function ProductsPage() {
         const unit = miniSubs?.find((item) => item.id === id)?.unit
         setUnit(unit)
     };
+    function updateBase(e) {
+        if (productBase === 1 && e !==1) {
+            fetchProducts();
+        } else if (productBase === 2) {
+            fetchMiniProducts()
+        }
+        if(e===1 && filterMiniId !== "") {            
+            fetchProducts()
+        }
+    };
     function clearFilters() {
         setFilterCatId("");
         setFilterSubId("");
         setFilterMiniId("");
         setProductBase(1);
-        updateBase()
+        updateBase(1);
     };
-    function updateBase() {
-        if (productBase === 1) {
-            fetchProducts();
-        } else if (productBase === 2) {
-            fetchMiniProducts()
-        }
-    };
+
     function clickPrev() {
-        if(products.page === 1) {
+        if (products.page === 1) {
             setPagin(products.totalPages)
-        }else {
+        } else {
             setPagin(--pagin)
         }
     };
     function clickNext() {
-        if(products.page === products.totalPages) {
+        if (products.page === products.totalPages) {
             setPagin(1)
-        }else {
+        } else {
             setPagin(++pagin)
         }
     }
