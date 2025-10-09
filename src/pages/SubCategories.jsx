@@ -123,10 +123,10 @@ function SubCategories() {
 
   return (
     <div>
-      <h2>SubCategories</h2>
+      <h2 style={{marginBottom:"90px"}}>SubCategories</h2>
 
       {/* Filter */}
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: "8px" }}>
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
@@ -143,6 +143,7 @@ function SubCategories() {
 
       {/* Add Form (fixed) */}
       <form onSubmit={addSubCategory} className="subcat-form">
+        
         <input
           type="text"
           placeholder="SubCategory name"
@@ -170,7 +171,7 @@ function SubCategories() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table border="1" cellPadding="8" style={{ marginTop: "80px", borderCollapse: "collapse", width: "100%" }}>
+        <table border="1" cellPadding="8" style={{ marginTop: "8px", borderCollapse: "collapse", width: "100%" }}>
           <thead>
             <tr>
               <th>#</th>
