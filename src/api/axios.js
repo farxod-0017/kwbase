@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.dev.usderp.uz/crm", // backend API manzilingiz
+  baseURL: "https://api.usderp.uz/crm", // backend API manzilingiz
   headers: {
     "Content-Type": "application/json",
   },
