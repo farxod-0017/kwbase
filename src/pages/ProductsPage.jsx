@@ -66,7 +66,7 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
         try {
             setLoading(true)
-            const res = await api.get(`/products/paginated?page=${pagin}&limit=20`)
+            const res = await api.get(`/products/page?page=${pagin}`)
             setProducts(res.data);
             setFilteredProducts(res.data.data);
             setProductBase(1);
@@ -211,7 +211,7 @@ export default function ProductsPage() {
         if (filterMiniId === "") return
         try {
             setLoading(true)
-            const res = await api.get(`/products/subcategoryId/${filterMiniId}`);
+            const res = await api.get(`/products/subcategory/${filterMiniId}`);
             if (res.data) {
                 setFilteredProducts(res.data);
                 setProductBase(2);
