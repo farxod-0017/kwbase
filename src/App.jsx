@@ -6,17 +6,9 @@ import Categories from './pages/CategoryPage';
 import SubCategories from './pages/SubCategories';
 import MiniSubCategories from './pages/MiniSubCategories';
 import ProductsPage from './pages/ProductsPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
 
-// Sahifalar (hozircha bo‘sh komponentlar)
-// function Categories() {
-//   return <h2>Categories Page</h2>;
-// }
-// function SubCategories() {
-//   return <h2>SubCategories Page</h2>;
-// }
-// function Products() {
-//   return <h2>Products Page</h2>;
-// }
 
 // Layout
 function Layout() {
@@ -34,11 +26,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path='/login' element={<LoginPage/>}/>
+        <Route path="/"
+          element={<ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>}
+        >
           <Route path="categories" element={<Categories />} />
           <Route path="subcategories" element={<SubCategories />} />
-          <Route path='minisubcategories' element={<MiniSubCategories/>}/>
-          <Route path="products" element={<ProductsPage/>} />
+          <Route path='minisubcategories' element={<MiniSubCategories />} />
+          <Route path="products" element={<ProductsPage />} />
         </Route>
       </Routes>
     </Router>
