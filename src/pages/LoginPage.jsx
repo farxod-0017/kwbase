@@ -13,7 +13,7 @@ function LoginPage() {
     const handleLogin = (e) => {
         e.preventDefault();
 
-        if (login === "davlatbek" && password === "85750017") {
+        if (login === "davlatbek" && password === "0737673") {
             const encrypted = CryptoJS.AES.encrypt("authorized", SECRET_KEY).toString();
             sessionStorage.setItem("auth", encrypted);
             navigate("/categories");
